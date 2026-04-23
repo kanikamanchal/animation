@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crazy Effects Slider</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --transition: 0.7s cubic-bezier(0.77, 0, 0.175, 1);
+      --accent: #ff4d4d;
+      --white: #fff;
+      --dark: #111;
+      --timer-duration: 5s;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0a0a0a;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* -------- HEADER -------- */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    }
+    header .logo {
+      font-family: 'Bebas Neue', cursive;
+      font-size: 2rem;
+      color: var(--white);
+      letter-spacing: 4px;
+    }
+    header nav a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      margin-left: 28px;
+      font-size: 0.85rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    header nav a:hover { color: var(--white); }
+
+    /* -------- CAROUSEL -------- */
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* List of slides */
+    .carousel .list {
+      position: absolute;
+      inset: 0;
+    }
+    .carousel .list .item {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+    .carousel .list .item.active {
+      opacity: 1;
+      z-index: 10;
+    }
+.carousel .list .item .content {
+    position: absolute;
+    bottom: 160px;
+    left: 60px;
+    max-width: 600px;
+    color: var(--white);
+    z-index: 5;
+    margin-left: 32px;
+}
+
+
+    /* Background image */
+    .carousel .list .item img.bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      transform: scale(1.08);
+      transition: transform var(--transition);
+      filter: brightness(0.55);
+    }
+    .carousel .list .item.active img.bg {
+      transform: scale(1);
+    }
+
+    /* Content */
+    .carousel .list .item .content {
+      position: absolute;
+      bottom: 160px;
+      left: 60px;
+      max-width: 600px;
+      color: var(--white);
+      z-index: 5;
+    }
+    .carousel .list .item .content .tag {
+      font-size: 0.75rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.5s 0.1s, transform 0.5s 0.1s;
+    }
+    .carousel .list .item .content h2 {
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      line-height: 1;
+      margin: 12px 0 16px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.6s 0.2s, transform 0.6s 0.2s;
+    }
+    .carousel .list .item .content p {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.75);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.5s 0.35s, transform 0.5s 0.35s;
+    }
+    .carousel .list .item .content .btns {
+      display: flex;
+      gap: 14px;
+      margin-top: 28px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.5s 0.45s, transform 0.5s 0.45s;
+    }
+    .carousel .list .item .content .btns button {
+      padding: 12px 32px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.82rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 50px;
+      transition: all 0.3s;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+    }
+    .btns .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btns .btn-primary:hover { background: #e03535; transform: translateY(-2px); }
+    .btns .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.5) !important;
+    }
+    .btns .btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+    /* Active item content animation */
+    .carousel .list .item.active .content .tag,
+    .carousel .list .item.active .content h2,
+    .carousel .list .item.active .content p,
+    .carousel .list .item.active .content .btns {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---- NEXT animation (slide in from right) ---- */
+    .carousel.next .list .item.active img.bg {
+      animation: zoomIn var(--transition) forwards;
+    }
+    @keyframes zoomIn {
+      from { transform: scale(1.15) translateX(5%); }
+      to   { transform: scale(1) translateX(0); }
+    }
+
+    /* ---- PREV animation (slide in from left) ---- */
+    .carousel.prev .list .item.active img.bg {
+      animation: zoomInLeft var(--transition) forwards;
+    }
+    @keyframes zoomInLeft {
+      from { transform: scale(1.15) translateX(-5%); }
+      to   { transform: scale(1) translateX(0); }
+    }
+
+    /* -------- THUMBNAILS -------- */
+    .thumbnail {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 14px;
+      z-index: 100;
+    }
+    .thumbnail .item {
+      width: 120px;
+      height: 70px;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      opacity: 0.5;
+      transition: opacity 0.4s, transform 0.4s;
+      flex-shrink: 0;
+    }
+    .thumbnail .item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .thumbnail .item.active {
+      opacity: 1;
+      transform: scale(1.1);
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .thumbnail .item:not(.active):hover { opacity: 0.8; transform: scale(1.05); }
+
+    /* -------- BUTTONS -------- */
+    .arrows {
+      position: absolute;
+      top: 50%;
+      right: 50px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 100;
+    }
+    .arrows button {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background 0.3s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .arrows button:hover { background: var(--accent); transform: scale(1.1); }
+
+    /* -------- COUNTDOWN BAR -------- */
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      width: 0%;
+      z-index: 100;
+      transition: width 0.1s linear;
+    }
+    .progress-bar.running {
+      animation: countdown var(--timer-duration) linear forwards;
+    }
+    @keyframes countdown {
+      from { width: 0%; }
+      to   { width: 100%; }
+    }
+
+    /* -------- SLIDE NUMBER -------- */
+    .slide-counter {
+      position: absolute;
+      top: 50%;
+      left: 40px;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .slide-counter .current {
+      font-family: 'Bebas Neue', cursive;
+      font-size: 3rem;
+      color: var(--white);
+      line-height: 1;
+    }
+    .slide-counter .line {
+      width: 1px;
+      height: 40px;
+      background: rgba(255,255,255,0.3);
+    }
+    .slide-counter .total {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* -------- RESPONSIVE -------- */
+    @media (max-width: 768px) {
+      header { padding: 16px 20px; }
+      header nav { display: none; }
+      .carousel .list .item .content {
+        left: 20px;
+        right: 20px;
+        bottom: 180px;
+        max-width: 100%;
+      }
+      .arrows { right: 14px; }
+      .thumbnail .item { width: 80px; height: 50px; }
+      .slide-counter { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">LUMINA</div>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Gallery</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </nav>
+</header>
+
+<!-- CAROUSEL -->
+<div class="carousel" id="carousel">
+
+  <!-- SLIDES -->
+  <div class="list" id="slideList">
+
+    <div class="item active">
+      <img class="bg" src="assets/01.jpg" alt="Mountains"/>
+      <div class="content">
+        <div class="tag">Nature • Adventure</div>
+        <h2>Majestic<br>Mountains</h2>
+        <p>Explore the breathtaking peaks of the world's most spectacular mountain ranges. A journey you'll never forget.</p>
+        <div class="btns">
+          <button class="btn-primary">Explore Now</button>
+          <button class="btn-outline">Watch Film</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <img class="bg" src="assets/02.jpg" alt="Ocean"/>
+      <div class="content">
+        <div class="tag">Ocean • Serenity</div>
+        <h2>Deep<br>Blue Sea</h2>
+        <p>Dive into the mesmerizing world beneath the waves. Discover hidden treasures and vibrant marine life.</p>
+        <div class="btns">
+          <button class="btn-primary">Dive In</button>
+          <button class="btn-outline">Learn More</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <img class="bg" src="assets/03.jpg" alt="Desert"/>
+      <div class="content">
+        <div class="tag">Desert • Mystery</div>
+        <h2>Golden<br>Dunes</h2>
+        <p>Walk the endless golden sands where silence meets the infinite horizon. Ancient stories etched in every grain.</p>
+        <div class="btns">
+          <button class="btn-primary">Discover</button>
+          <button class="btn-outline">Gallery</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <img class="bg" src="assets/04.jpg" alt="Night Sky"/>
+      <div class="content">
+        <div class="tag">Space • Wonder</div>
+        <h2>Starlit<br>Skies</h2>
+        <p>Gaze upon a thousand stars painted across the night canvas. Where dreams are born and galaxies whisper.</p>
+        <div class="btns">
+          <button class="btn-primary">Stargaze</button>
+          <button class="btn-outline">View Map</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <img class="bg" src="assets/05.jpg" alt="Forest"/>
+      <div class="content">
+        <div class="tag">Forest • Peace</div>
+        <h2>Ancient<br>Forests</h2>
+        <p>Walk beneath the cathedral canopy of ancient trees. Where every breath is pure and time slows to a sacred pace.</p>
+        <div class="btns">
+          <button class="btn-primary">Wander</button>
+          <button class="btn-outline">Explore</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .list -->
+
+  <!-- SLIDE COUNTER -->
+  <div class="slide-counter">
+    <span class="current" id="currentNum">01</span>
+    <div class="line"></div>
+    <span class="total" id="totalNum">05</span>
+  </div>
+
+  <!-- ARROW BUTTONS -->
+  <div class="arrows">
+    <button id="prevBtn">&#8593;</button>
+    <button id="nextBtn">&#8595;</button>
+  </div>
+
+  <!-- THUMBNAILS -->
+  <div class="thumbnail" id="thumbnail">
+    <div class="item active"><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&q=60" alt="Mountains"/></div>
+    <div class="item"><img src="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=300&q=60" alt="Ocean"/></div>
+    <div class="item"><img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=300&q=60" alt="Desert"/></div>
+    <div class="item"><img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=300&q=60" alt="Night Sky"/></div>
+    <div class="item"><img src="https://images.unsplash.com/photo-1511497584788-876760111969?w=300&q=60" alt="Forest"/></div>
+  </div>
+
+  <!-- COUNTDOWN PROGRESS BAR -->
+  <div class="progress-bar running" id="progressBar"></div>
+
+</div><!-- end .carousel -->
+
+<script>
+  const carousel   = document.getElementById('carousel');
+  const slides     = document.querySelectorAll('.carousel .list .item');
+  const thumbItems = document.querySelectorAll('.thumbnail .item');
+  const prevBtn    = document.getElementById('prevBtn');
+  const nextBtn    = document.getElementById('nextBtn');
+  const progressBar= document.getElementById('progressBar');
+  const currentNum = document.getElementById('currentNum');
+  const totalNum   = document.getElementById('totalNum');
+
+  const TOTAL = slides.length;
+  const AUTO_TIME = 5000; // ms
+  let current = 0;
+  let autoTimer = null;
+
+  // Update total counter
+  totalNum.textContent = String(TOTAL).padStart(2, '0');
+
+  /* ---- GOTO slide ---- */
+  function goTo(index, direction = 'next') {
+    slides[current].classList.remove('active');
+    thumbItems[current].classList.remove('active');
+
+    current = (index + TOTAL) % TOTAL;
+
+    slides[current].classList.add('active');
+    thumbItems[current].classList.add('active');
+    currentNum.textContent = String(current + 1).padStart(2, '0');
+
+    // Direction class for animation
+    carousel.classList.remove('next', 'prev');
+    carousel.classList.add(direction);
+
+    resetProgress();
+    resetAutoPlay();
+  }
+
+  /* ---- NEXT ---- */
+  function goNext() { goTo(current + 1, 'next'); }
+
+  /* ---- PREV ---- */
+  function goPrev() { goTo(current - 1, 'prev'); }
+
+  /* ---- PROGRESS BAR ---- */
+  function resetProgress() {
+    progressBar.classList.remove('running');
+    void progressBar.offsetWidth; // reflow trick
+    progressBar.classList.add('running');
+  }
+
+  /* ---- AUTO PLAY ---- */
+  function resetAutoPlay() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(goNext, AUTO_TIME);
+  }
+
+  /* ---- EVENTS ---- */
+  nextBtn.addEventListener('click', goNext);
+  prevBtn.addEventListener('click', goPrev);
+
+  thumbItems.forEach((thumb, i) => {
+    thumb.addEventListener('click', () => {
+      if (i !== current) goTo(i, i > current ? 'next' : 'prev');
+    });
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goNext();
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goPrev();
+  });
+
+  // Start autoplay
+  resetAutoPlay();
+</script>
+</body>
+</html>
